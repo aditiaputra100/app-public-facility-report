@@ -5,6 +5,7 @@ class FilledTextField extends StatelessWidget {
   final String hintText;
   final Icon? prefixIcon;
   final int? maxLines;
+  final TextInputType? inputType;
 
   const FilledTextField({
     super.key,
@@ -12,12 +13,14 @@ class FilledTextField extends StatelessWidget {
     required this.hintText,
     this.prefixIcon,
     this.maxLines,
+    this.inputType,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
+      keyboardType: inputType,
       decoration: InputDecoration(
         isDense: true,
         hintText: hintText,

@@ -32,6 +32,7 @@ class _ProfilePageViewState extends State<ProfilePageView> {
               child: ElevatedButton(
                 onPressed: () {
                   Provider.of<UserViewModel>(context, listen: false).logout();
+                  Navigator.of(context).pushReplacementNamed('/sign-in');
                 },
                 child: Text("Keluar"),
               ),

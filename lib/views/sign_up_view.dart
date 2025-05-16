@@ -40,7 +40,9 @@ class _SignUpViewState extends State<SignUpView> {
 
       String? error = Provider.of<UserViewModel>(context, listen: false).error;
 
-      if (error == null) {}
+      if (error == null) {
+        Navigator.of(context).pushReplacementNamed('/home');
+      }
     }
   }
 

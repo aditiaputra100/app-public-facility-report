@@ -28,5 +28,9 @@ class UserService {
     await _auth.signOut();
   }
 
+  Future<void> resetPassword(String email) async {
+    await _auth.sendPasswordResetEmail(email: email);
+  }
+
   Stream<User?> get authStateChange => _auth.authStateChanges();
 }

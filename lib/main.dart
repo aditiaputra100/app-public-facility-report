@@ -2,6 +2,7 @@ import 'package:app_public_facility_report/auth_wrapper.dart';
 import 'package:app_public_facility_report/firebase_options.dart';
 import 'package:app_public_facility_report/theme.dart';
 import 'package:app_public_facility_report/viewmodels/user_view_model.dart';
+import 'package:app_public_facility_report/views/forget_password_view.dart';
 import 'package:app_public_facility_report/views/home/home_view.dart';
 import 'package:app_public_facility_report/views/sign_in_view.dart';
 import 'package:app_public_facility_report/views/sign_up_view.dart';
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => HomeView(),
         '/sign-up': (context) => SignUpView(),
         '/sign-in': (context) => SignInView(),
+        '/forget-pass': (context) => ForgetPasswordView(),
       },
       home: AuthWrapper(),
     );

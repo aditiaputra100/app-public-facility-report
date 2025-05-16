@@ -18,12 +18,31 @@ class _SignInViewState extends State<SignInView> {
 
   bool _isPasswordVisible = false;
 
-  void _login() {
+  void _login() async {
     String email = _emailController.text;
     String password = _passwordController.text;
 
     if (_formKey.currentState!.validate()) {
-      Provider.of<UserViewModel>(context, listen: false).login(email, password);
+      final UserViewModel userViewModel = Provider.of<UserViewModel>(
+        context,
+        listen: false,
+      );
+
+      await userViewModel.login(email, password);
+
+      if (mounted) {
+        if (userViewModel.error != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(userViewModel.error!),
+              backgroundColor: Colors.red,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        } else {
+          Navigator.of(context).pushReplacementNamed('/home');
+        }
+      }
     }
   }
 
@@ -36,6 +55,10 @@ class _SignInViewState extends State<SignInView> {
 
   @override
   Widget build(BuildContext context) {
+    final UserViewModel userViewModel = Provider.of<UserViewModel>(
+      context,
+      listen: false,
+    );
     return Scaffold(
       appBar: AppBar(),
       body: SingleChildScrollView(
@@ -63,8 +86,6 @@ class _SignInViewState extends State<SignInView> {
                           if (value == null || value.isEmpty) {
                             return 'Email tidak boleh kosong';
                           }
-
-                          return value;
                         },
                       ),
                       FilledTextFormField(
@@ -88,8 +109,6 @@ class _SignInViewState extends State<SignInView> {
                           if (value == null || value.isEmpty) {
                             return 'Password tidak boleh kosong';
                           }
-
-                          return value;
                         },
                       ),
                     ],
@@ -97,9 +116,14 @@ class _SignInViewState extends State<SignInView> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Text(
-                        "Lupa password?",
-                        style: TextStyle(color: Colors.blue),
+                      GestureDetector(
+                        onTap:
+                            () =>
+                                Navigator.of(context).pushNamed("/forget-pass"),
+                        child: Text(
+                          "Lupa password?",
+                          style: TextStyle(color: Colors.blue),
+                        ),
                       ),
                     ],
                   ),
@@ -107,7 +131,10 @@ class _SignInViewState extends State<SignInView> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: _login,
-                      child: Text("Masuk"),
+                      child:
+                          userViewModel.isLoading
+                              ? CircularProgressIndicator()
+                              : Text("Masuk"),
                     ),
                   ),
                   Text("Atau", style: TextStyle(color: Colors.grey)),
