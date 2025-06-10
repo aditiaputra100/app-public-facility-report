@@ -1,5 +1,5 @@
-import 'package:app_public_facility_report/viewmodels/user_view_model.dart';
-import 'package:app_public_facility_report/views/widgets/filled_text_field.dart';
+import 'package:app_public_facility_report/app/user/viewmodels/user_view_model.dart';
+import 'package:app_public_facility_report/app/user/views/widgets/filled_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

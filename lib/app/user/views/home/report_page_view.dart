@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:app_public_facility_report/views/widgets/filled_text_field.dart';
-import 'package:app_public_facility_report/views/widgets/image_picker_button.dart';
+import 'package:app_public_facility_report/app/user/views/widgets/filled_text_field.dart';
+import 'package:app_public_facility_report/app/user/views/widgets/image_picker_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';

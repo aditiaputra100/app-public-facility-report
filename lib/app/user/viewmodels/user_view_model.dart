@@ -1,4 +1,6 @@
-import 'package:app_public_facility_report/services/user_service.dart';
+import 'dart:io';
+
+import 'package:app_public_facility_report/app/user/services/user_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
@@ -19,16 +21,39 @@ class UserViewModel extends ChangeNotifier {
     });
   }
 
-  void register(String email, String password, String name) async {
+  Future<void> register(String email, String password, String name) async {
     _isLoading = true;
     notifyListeners();
 
     try {
       _user = await _userService.create(email, password, name);
       _error = null;
+    } on FirebaseAuthException catch (error) {
+      switch (error.code) {
+        case 'email-already-in-use':
+          _error = 'Email sudah digunakan';
+          break;
+        case 'weak-password':
+          _error = 'Password lemah';
+          break;
+        default:
+          _error = 'Terjadi kesalahan! Hubungi operator';
+      }
+    } on HttpException catch (error) {
+      _error = error.message;
     } catch (error) {
-      _error = error.toString();
+      _user?.delete();
+      _error = "Kesalahan tidak diketahui! Hubungi operator";
     }
+
+    // Check if error is truly filled
+    // await Future.delayed(Duration(seconds: 2), () {
+    //   // Getting error
+    //   // _error = "Error";
+
+    //   // No error
+    //   _error = null;
+    // });
 
     _isLoading = false;
     notifyListeners();

@@ -1,5 +1,5 @@
-import 'package:app_public_facility_report/viewmodels/user_view_model.dart';
-import 'package:app_public_facility_report/views/widgets/filled_text_form_field.dart';
+import 'package:app_public_facility_report/app/user/viewmodels/user_view_model.dart';
+import 'package:app_public_facility_report/app/user/views/widgets/filled_text_form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -55,10 +55,7 @@ class _SignInViewState extends State<SignInView> {
 
   @override
   Widget build(BuildContext context) {
-    final UserViewModel userViewModel = Provider.of<UserViewModel>(
-      context,
-      listen: false,
-    );
+    final UserViewModel userViewModel = Provider.of<UserViewModel>(context);
     return Scaffold(
       appBar: AppBar(),
       body: SingleChildScrollView(
@@ -86,6 +83,8 @@ class _SignInViewState extends State<SignInView> {
                           if (value == null || value.isEmpty) {
                             return 'Email tidak boleh kosong';
                           }
+
+                          return null;
                         },
                       ),
                       FilledTextFormField(
@@ -109,6 +108,8 @@ class _SignInViewState extends State<SignInView> {
                           if (value == null || value.isEmpty) {
                             return 'Password tidak boleh kosong';
                           }
+
+                          return null;
                         },
                       ),
                     ],
@@ -133,7 +134,7 @@ class _SignInViewState extends State<SignInView> {
                       onPressed: _login,
                       child:
                           userViewModel.isLoading
-                              ? CircularProgressIndicator()
+                              ? CircularProgressIndicator(strokeWidth: 2)
                               : Text("Masuk"),
                     ),
                   ),

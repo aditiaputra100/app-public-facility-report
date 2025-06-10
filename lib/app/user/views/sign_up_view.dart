@@ -1,5 +1,5 @@
-import 'package:app_public_facility_report/viewmodels/user_view_model.dart';
-import 'package:app_public_facility_report/views/widgets/filled_text_form_field.dart';
+import 'package:app_public_facility_report/app/user/viewmodels/user_view_model.dart';
+import 'package:app_public_facility_report/app/user/views/widgets/filled_text_form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -27,27 +27,42 @@ class _SignUpViewState extends State<SignUpView> {
     super.dispose();
   }
 
-  void _register() {
+  void _register() async {
     if (_formKey.currentState!.validate()) {
       String email = _emailController.text;
       String password = _passwordController.text;
       String name = _nameController.text;
 
-      Provider.of<UserViewModel>(
-        context,
-        listen: false,
-      ).register(email, password, name);
+      final uvm = Provider.of<UserViewModel>(context, listen: false);
 
-      String? error = Provider.of<UserViewModel>(context, listen: false).error;
+      await uvm.register(email, password, name);
 
-      if (error == null) {
-        Navigator.of(context).pushReplacementNamed('/home');
+      String? error = uvm.error;
+
+      if (mounted) {
+        if (error != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(error),
+              backgroundColor: Colors.red,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+
+          return;
+        }
+
+        Navigator.of(
+          context,
+        ).pushNamedAndRemoveUntil("/home", (route) => false);
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final uvm = Provider.of<UserViewModel>(context);
+
     return Scaffold(
       appBar: AppBar(),
       body: SingleChildScrollView(
@@ -135,8 +150,11 @@ class _SignUpViewState extends State<SignUpView> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: _register,
-                      child: Text("Daftar"),
+                      onPressed: uvm.isLoading ? null : _register,
+                      child:
+                          uvm.isLoading
+                              ? CircularProgressIndicator(strokeWidth: 2)
+                              : Text("Daftar"),
                     ),
                   ),
                   Text("Atau", style: TextStyle(color: Colors.grey)),

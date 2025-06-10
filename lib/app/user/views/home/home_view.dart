@@ -1,6 +1,6 @@
-import 'package:app_public_facility_report/views/home/home_page_view.dart';
-import 'package:app_public_facility_report/views/home/profile_page_view.dart';
-import 'package:app_public_facility_report/views/home/report_page_view.dart';
+import 'package:app_public_facility_report/app/user/views/home/home_page_view.dart';
+import 'package:app_public_facility_report/app/user/views/home/profile_page_view.dart';
+import 'package:app_public_facility_report/app/user/views/home/report_page_view.dart';
 import 'package:flutter/material.dart';
 
 const titleIndex = {1: "Lapor", 2: "Status", 3: "Profil"};
