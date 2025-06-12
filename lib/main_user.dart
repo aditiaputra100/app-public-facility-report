@@ -1,5 +1,6 @@
 import 'package:app_public_facility_report/app/user/auth_wrapper.dart';
-import 'package:app_public_facility_report/app/user/firebase_options.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'firebase/firebase_options_user.dart';
 import 'package:app_public_facility_report/app/user/theme.dart';
 import 'package:app_public_facility_report/app/user/viewmodels/user_view_model.dart';
 import 'package:app_public_facility_report/app/user/views/forget_password_view.dart';
@@ -12,6 +13,8 @@ import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await dotenv.load(fileName: ".env");
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 

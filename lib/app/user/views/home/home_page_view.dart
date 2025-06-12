@@ -1,5 +1,5 @@
 import 'package:app_public_facility_report/app/user/viewmodels/user_view_model.dart';
-import 'package:app_public_facility_report/app/user/views/widgets/card_report.dart';
+import 'package:app_public_facility_report/app/widgets/card_report.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';

@@ -1,7 +1,6 @@
-import 'package:app_public_facility_report/app/user/viewmodels/user_view_model.dart';
+import 'package:app_public_facility_report/app/admin/viewmodels/admin_view_model.dart';
 import 'package:app_public_facility_report/app/widgets/filled_text_form_field.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class SignInView extends StatefulWidget {
@@ -13,8 +12,8 @@ class SignInView extends StatefulWidget {
 
 class _SignInViewState extends State<SignInView> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   bool _isPasswordVisible = false;
 
@@ -23,24 +22,26 @@ class _SignInViewState extends State<SignInView> {
     String password = _passwordController.text;
 
     if (_formKey.currentState!.validate()) {
-      final UserViewModel userViewModel = Provider.of<UserViewModel>(
+      final AdminViewModel adminViewModel = Provider.of<AdminViewModel>(
         context,
         listen: false,
       );
 
-      await userViewModel.login(email, password);
+      await adminViewModel.login(email, password);
 
       if (mounted) {
-        if (userViewModel.error != null) {
+        if (adminViewModel.error != null) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(userViewModel.error!),
+              content: Text(adminViewModel.error!),
               backgroundColor: Colors.red,
               behavior: SnackBarBehavior.floating,
             ),
           );
         } else {
-          Navigator.of(context).pushReplacementNamed('/home');
+          Navigator.of(
+            context,
+          ).pushNamedAndRemoveUntil("/home", (route) => true);
         }
       }
     }
@@ -50,12 +51,14 @@ class _SignInViewState extends State<SignInView> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final UserViewModel userViewModel = Provider.of<UserViewModel>(context);
+    final AdminViewModel adminViewModel = Provider.of<AdminViewModel>(context);
+
     return Scaffold(
       appBar: AppBar(),
       body: SingleChildScrollView(
@@ -65,20 +68,17 @@ class _SignInViewState extends State<SignInView> {
             child: Form(
               key: _formKey,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 spacing: 24,
                 children: [
-                  // Title
-                  Text("Masuk", style: Theme.of(context).textTheme.titleLarge),
-                  SizedBox(height: 24),
+                  Text("Masuk Admin"),
                   Column(
                     spacing: 24,
                     children: [
                       FilledTextFormField(
-                        prefixIcon: Icon(Icons.email),
                         controller: _emailController,
                         hintText: "Email",
-                        inputType: TextInputType.emailAddress,
+                        prefixIcon: Icon(Icons.email),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Email tidak boleh kosong';
@@ -88,6 +88,8 @@ class _SignInViewState extends State<SignInView> {
                         },
                       ),
                       FilledTextFormField(
+                        controller: _passwordController,
+                        hintText: "Password",
                         prefixIcon: Icon(Icons.lock),
                         suffixIcon: IconButton(
                           onPressed: () {
@@ -101,8 +103,6 @@ class _SignInViewState extends State<SignInView> {
                                 : Icons.visibility,
                           ),
                         ),
-                        controller: _passwordController,
-                        hintText: "Password",
                         obscureText: !_isPasswordVisible,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -114,59 +114,15 @@ class _SignInViewState extends State<SignInView> {
                       ),
                     ],
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      GestureDetector(
-                        onTap:
-                            () =>
-                                Navigator.of(context).pushNamed("/forget-pass"),
-                        child: Text(
-                          "Lupa password?",
-                          style: TextStyle(color: Colors.blue),
-                        ),
-                      ),
-                    ],
-                  ),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: _login,
                       child:
-                          userViewModel.isLoading
+                          adminViewModel.isLoading
                               ? CircularProgressIndicator(strokeWidth: 2)
                               : Text("Masuk"),
                     ),
-                  ),
-                  Text("Atau", style: TextStyle(color: Colors.grey)),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      GestureDetector(
-                        onTap: () {},
-                        child: SvgPicture.asset(
-                          'assets/images/g_icon.svg',
-                          width: 48,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Tidak punya akun? ",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                      GestureDetector(
-                        onTap:
-                            () => Navigator.of(context).pushNamed('/sign-up'),
-                        child: Text(
-                          "Daftar disini",
-                          style: TextStyle(color: Colors.blue),
-                        ),
-                      ),
-                    ],
                   ),
                 ],
               ),
