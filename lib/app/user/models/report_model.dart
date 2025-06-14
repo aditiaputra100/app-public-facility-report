@@ -1,3 +1,5 @@
+import 'dart:io';
+
 class ReportModel {
   int? id;
   final String userUid;
@@ -20,4 +22,12 @@ class ReportModel {
     required this.createdAt,
     required this.updatedAt,
   });
+
+  Map<String, String> toMap() {
+    return {
+      "facility": facility,
+      "description": description,
+      "location": location,
+    };
+  }
 }

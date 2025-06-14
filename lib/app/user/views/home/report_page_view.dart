@@ -32,16 +32,84 @@ class _ReportPageViewState extends State<ReportPageView> {
       setState(() {
         _image = imagePath;
       });
-    } on PlatformException catch (error) {
-      print("Error: $error");
+    } on PlatformException catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(_errorSnackBar("Terjadi kesalahan!"));
+      }
     }
   }
 
-  void _addReport() {
+  void _addReport() async {
     String facility = _facilityController.text;
     String description = _descriptionController.text;
 
+    if (facility.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(_errorSnackBar("Fasilitas tidak boleh kosong!"));
+
+      return;
+    }
+
+    if (description.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(_errorSnackBar("Deskripsi tidak boleh kosong!"));
+
+      return;
+    }
+
     final uvm = Provider.of<UserViewModel>(context, listen: false);
+
+    if (uvm.placemark == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        _errorSnackBar(
+          "Lokasi tidak boleh kosong! Harap hidupkan lokasi atau beri ijin lokasi",
+        ),
+      );
+
+      return;
+    }
+
+    if (_image == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(_errorSnackBar("Foto belum dipilih!"));
+
+      return;
+    }
+
+    await uvm.addReport(facility, description, _image!);
+
+    if (uvm.error != null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(_errorSnackBar(uvm.error!));
+      }
+    } else {
+      setState(() {
+        _facilityController.clear();
+        _descriptionController.clear();
+        _image = null;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Laporan berhasil dibuat"),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
+  }
+
+  SnackBar _errorSnackBar(String message) {
+    return SnackBar(
+      content: Text(message),
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Colors.red,
+    );
   }
 
   @override
@@ -117,7 +185,10 @@ class _ReportPageViewState extends State<ReportPageView> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: _addReport,
-                child: Text("Kirim laporan"),
+                child:
+                    uvm.isLoading
+                        ? CircularProgressIndicator(strokeWidth: 2)
+                        : Text("Kirim laporan"),
               ),
             ),
           ],

@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:io';
 
+import 'package:app_public_facility_report/app/user/models/report_model.dart';
 import 'package:app_public_facility_report/app/user/services/user_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -76,10 +78,39 @@ class UserViewModel extends ChangeNotifier {
   Future<void> addReport(
     String facility,
     String description,
-    String location,
     File image,
   ) async {
-    print("created");
+    _isLoading = true;
+    notifyListeners();
+
+    final ReportModel reportModel = ReportModel(
+      userUid: _user!.uid,
+      facility: facility,
+      description: description,
+      location: _placemark!.subAdministrativeArea ?? 'Unknown',
+      imagePath: image.path,
+      status: 'in-submitted',
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
+
+    String? token = await _user!.getIdToken();
+
+    try {
+      await _userService.createReport(reportModel, token);
+      _error = null;
+    } on TimeoutException catch (_) {
+      _error = "Tidak dapat terhubung ke server!";
+    } on HttpException catch (error) {
+      if (error.message == 'bad-request') {
+        _error = "Token tidak valid!";
+      }
+    } catch (_) {
+      _error = "Terjadi kesalahan!";
+    }
+
+    _isLoading = false;
+    notifyListeners();
   }
 
   Future<void> register(String email, String password, String name) async {

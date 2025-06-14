@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:path/path.dart';
 import 'package:app_public_facility_report/app/user/models/report_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -9,8 +9,39 @@ class UserService {
   final _auth = FirebaseAuth.instance;
   final _host = kDebugMode ? "http://10.0.2.2:8000" : "";
 
-  Future<void> createReport(ReportModel report) async {
-    print(report);
+  Future<void> createReport(ReportModel report, String? token) async {
+    final uri = Uri.parse("$_host/report");
+    final File fileImage = File(report.imagePath);
+
+    final request = http.MultipartRequest("POST", uri);
+
+    final image = http.MultipartFile.fromBytes(
+      'picture',
+      fileImage.readAsBytesSync(),
+      filename: basename(fileImage.path),
+    );
+
+    request.headers.addAll({"Authorization": "Bearer $token"});
+
+    request.fields.addAll(report.toMap());
+    request.files.add(image);
+
+    // final response = await http.post(
+    //   uri,
+    //   headers: {
+    //     "Authorization": "Bearer $token",
+    //     "Content-Type": "application/x-www-form-urlencoded",
+    //   },
+    //   body: report.toMap(),
+    // );
+
+    final response = await request.send().timeout(Duration(seconds: 15));
+
+    if (response.statusCode == 201) {
+      return;
+    } else if (response.statusCode == 401) {
+      throw HttpException("bad-request", uri: uri);
+    }
   }
 
   Future<User?> create(String email, String password, String name) async {
