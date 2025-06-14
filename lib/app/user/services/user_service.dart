@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:app_public_facility_report/app/user/models/report_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
@@ -7,6 +8,10 @@ import 'package:http/http.dart' as http;
 class UserService {
   final _auth = FirebaseAuth.instance;
   final _host = kDebugMode ? "http://10.0.2.2:8000" : "";
+
+  Future<void> createReport(ReportModel report) async {
+    print(report);
+  }
 
   Future<User?> create(String email, String password, String name) async {
     try {

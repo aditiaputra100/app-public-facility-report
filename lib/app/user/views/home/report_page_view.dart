@@ -35,6 +35,11 @@ class _ReportPageViewState extends State<ReportPageView> {
     }
   }
 
+  void _addReport() {
+    String facility = _facilityController.text;
+    String description = _descriptionController.text;
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -102,7 +107,7 @@ class _ReportPageViewState extends State<ReportPageView> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: _addReport,
                 child: Text("Kirim laporan"),
               ),
             ),

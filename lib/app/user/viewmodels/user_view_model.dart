@@ -21,6 +21,15 @@ class UserViewModel extends ChangeNotifier {
     });
   }
 
+  Future<void> addReport(
+    String facility,
+    String description,
+    String location,
+    File image,
+  ) async {
+    print("created");
+  }
+
   Future<void> register(String email, String password, String name) async {
     _isLoading = true;
     notifyListeners();
