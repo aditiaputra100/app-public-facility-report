@@ -1,10 +1,12 @@
 import 'dart:io';
 
+import 'package:app_public_facility_report/app/user/viewmodels/user_view_model.dart';
 import 'package:app_public_facility_report/app/widgets/filled_text_field.dart';
 import 'package:app_public_facility_report/app/widgets/image_picker_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 class ReportPageView extends StatefulWidget {
   const ReportPageView({super.key});
@@ -38,6 +40,8 @@ class _ReportPageViewState extends State<ReportPageView> {
   void _addReport() {
     String facility = _facilityController.text;
     String description = _descriptionController.text;
+
+    final uvm = Provider.of<UserViewModel>(context, listen: false);
   }
 
   @override
