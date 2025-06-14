@@ -2,6 +2,7 @@ import 'package:app_public_facility_report/app/user/viewmodels/user_view_model.d
 import 'package:app_public_facility_report/app/widgets/card_report.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
@@ -14,6 +15,7 @@ class HomePageView extends StatefulWidget {
 
 class _HomePageViewState extends State<HomePageView> {
   User? _user;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -23,8 +25,21 @@ class _HomePageViewState extends State<HomePageView> {
     });
   }
 
+  void _hanldeLocation() {
+    final uvm = Provider.of<UserViewModel>(context, listen: false);
+
+    if (uvm.locationPermission == LocationPermission.denied) {
+      uvm.handleLocationPermission();
+      return;
+    }
+
+    uvm.getCurrentLocation();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final uvm = Provider.of<UserViewModel>(context);
+
     return Stack(
       children: [
         Container(
@@ -117,19 +132,34 @@ class _HomePageViewState extends State<HomePageView> {
 
                 // Lokasi
                 TextButton(
-                  onPressed: () {},
+                  onPressed:
+                      uvm.isLocationEnable
+                          ? uvm.locationPermission ==
+                                  LocationPermission.deniedForever
+                              ? null
+                              : _hanldeLocation
+                          : null,
                   child: Row(
                     spacing: 12,
                     children: [
                       Icon(Icons.location_pin),
                       Text(
-                        "Default location",
+                        uvm.isLocationEnable
+                            ? uvm.locationPermission ==
+                                    LocationPermission.deniedForever
+                                ? "Ijin lokasi ditolak permanen, harap ijinkan lokasi"
+                                : uvm.locationPermission ==
+                                    LocationPermission.denied
+                                ? "Ijin lokasi ditolak"
+                                : uvm.placemark?.subAdministrativeArea ??
+                                    'Lokasi tidak diketahui'
+                            : "Lokasi tidak aktif",
                         style: GoogleFonts.dmSans(color: Colors.grey),
                       ),
-                      Text(
-                        "Ubah lokasi?",
-                        style: GoogleFonts.dmSans(color: Colors.blue),
-                      ),
+                      // Text(
+                      //   "Ubah lokasi?",
+                      //   style: GoogleFonts.dmSans(color: Colors.blue),
+                      // ),
                     ],
                   ),
                 ),

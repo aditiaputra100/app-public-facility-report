@@ -10,7 +10,8 @@ plugins {
 
 android {
     namespace = "com.example.app_public_facility_report"
-    compileSdk = flutter.compileSdkVersion
+    // compileSdk = flutter.compileSdkVersion
+    compileSdk = 35
     ndkVersion = flutter.ndkVersion
 
     flavorDimensions += "app"
