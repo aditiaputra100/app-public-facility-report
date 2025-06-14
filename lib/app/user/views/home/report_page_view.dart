@@ -46,6 +46,7 @@ class _ReportPageViewState extends State<ReportPageView> {
 
   @override
   Widget build(BuildContext context) {
+    final uvm = Provider.of<UserViewModel>(context);
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
@@ -86,10 +87,14 @@ class _ReportPageViewState extends State<ReportPageView> {
                 Text("Lokasi"),
                 SizedBox(
                   width: double.infinity,
-                  child: OutlinedButton.icon(
-                    onPressed: () {},
-                    icon: Icon(Icons.location_pin),
-                    label: Text("Default location"),
+                  // child: OutlinedButton.icon(
+                  //   onPressed: () {},
+                  //   icon: Icon(Icons.location_pin),
+                  //   label: Text("Default location"),
+                  // ),
+                  child: Text(
+                    uvm.placemark?.subAdministrativeArea ??
+                        "Lokasi tidak diketahui",
                   ),
                 ),
               ],

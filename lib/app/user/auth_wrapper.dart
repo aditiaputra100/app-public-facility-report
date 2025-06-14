@@ -1,42 +1,43 @@
+import 'package:app_public_facility_report/app/user/viewmodels/user_view_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:provider/provider.dart';
 
 class AuthWrapper extends StatelessWidget {
   const AuthWrapper({super.key});
 
-  Future<void> _handleLocationPermission(BuildContext context) async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (context.mounted) {
-      if (!serviceEnabled) {
-        _showSnackBar(context, "Lokasi tidak aktif, harap aktifkan lokasi!");
-        return;
-      }
-    }
-    LocationPermission permission = await Geolocator.checkPermission();
+  // Future<void> _handleLocationPermission(BuildContext context) async {
+  //   bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  //   if (context.mounted) {
+  //     if (!serviceEnabled) {
+  //       _showSnackBar(context, "Lokasi tidak aktif, harap aktifkan lokasi!");
+  //       return;
+  //     }
+  //   }
+  //   LocationPermission permission = await Geolocator.checkPermission();
 
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
+  //   if (permission == LocationPermission.denied) {
+  //     permission = await Geolocator.requestPermission();
 
-      if (permission == LocationPermission.denied) {
-        if (context.mounted) {
-          _showSnackBar(context, "Ijin lokasi ditolak");
-        }
-        return;
-      }
-    } else if (permission == LocationPermission.deniedForever) {
-      if (context.mounted) {
-        _showSnackBar(context, "Ijin lokasi ditolak, harap beri ijin lokasi");
-      }
-      return;
-    }
-  }
+  //     if (permission == LocationPermission.denied) {
+  //       if (context.mounted) {
+  //         _showSnackBar(context, "Ijin lokasi ditolak");
+  //       }
+  //       return;
+  //     }
+  //   } else if (permission == LocationPermission.deniedForever) {
+  //     if (context.mounted) {
+  //       _showSnackBar(context, "Ijin lokasi ditolak, harap beri ijin lokasi");
+  //     }
+  //     return;
+  //   }
+  // }
 
-  void _showSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
-    );
-  }
+  // void _showSnackBar(BuildContext context, String message) {
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +86,7 @@ class AuthWrapper extends StatelessWidget {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
-        _handleLocationPermission(context);
+        Provider.of<UserViewModel>(context).handleLocationPermission();
         if (snapshot.connectionState == ConnectionState.active) {
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
             final user = snapshot.data;

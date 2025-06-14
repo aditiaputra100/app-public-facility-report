@@ -3,22 +3,74 @@ import 'dart:io';
 import 'package:app_public_facility_report/app/user/services/user_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 
 class UserViewModel extends ChangeNotifier {
   final UserService _userService = UserService();
   User? _user;
   String? _error;
   bool _isLoading = false;
+  bool _isLocationEnable = false;
+  LocationPermission? _locationPermission;
+  Placemark? _placemark;
 
   User? get user => _user;
   String? get error => _error;
   bool get isLoading => _isLoading;
+  bool get isLocationEnable => _isLocationEnable;
+  LocationPermission? get locationPermission => _locationPermission;
+  Placemark? get placemark => _placemark;
 
   UserViewModel() {
     _userService.authStateChange.listen((User? user) {
       _user = user;
       notifyListeners();
     });
+  }
+
+  Future<void> handleLocationPermission() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      _isLocationEnable = false;
+      notifyListeners();
+      return;
+    }
+
+    _isLocationEnable = true;
+    notifyListeners();
+
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+
+      if (permission == LocationPermission.denied) {
+        _locationPermission = LocationPermission.denied;
+        notifyListeners();
+        return;
+      }
+    } else if (permission == LocationPermission.deniedForever) {
+      _locationPermission = LocationPermission.deniedForever;
+      notifyListeners();
+      return;
+    }
+
+    _locationPermission = LocationPermission.always;
+    getCurrentLocation();
+    notifyListeners();
+  }
+
+  Future<void> getCurrentLocation() async {
+    Position position = await Geolocator.getCurrentPosition();
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+      position.latitude,
+      position.longitude,
+    );
+    Placemark placemark = placemarks[0];
+
+    _placemark = placemark;
+    notifyListeners();
   }
 
   Future<void> addReport(
