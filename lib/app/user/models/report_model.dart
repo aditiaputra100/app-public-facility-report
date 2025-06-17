@@ -1,5 +1,3 @@
-import 'dart:io';
-
 class ReportModel {
   int? id;
   final String userUid;

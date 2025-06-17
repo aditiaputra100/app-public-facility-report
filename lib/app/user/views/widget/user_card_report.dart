@@ -6,6 +6,7 @@ class UserCardReport extends StatelessWidget {
   final String? imagePath;
   final String facility;
   final String description;
+  final String location;
   final DateTime createdAt;
 
   const UserCardReport({
@@ -14,6 +15,7 @@ class UserCardReport extends StatelessWidget {
     required this.facility,
     required this.description,
     required this.createdAt,
+    required this.location,
   });
 
   @override
@@ -36,6 +38,7 @@ class UserCardReport extends StatelessWidget {
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 6,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -51,6 +54,12 @@ class UserCardReport extends StatelessWidget {
 
                   // Deskripsi
                   Text(description, style: GoogleFonts.dmSans()),
+                  Row(
+                    children: [
+                      Icon(Icons.place, color: Colors.grey),
+                      Text(location),
+                    ],
+                  ),
                 ],
               ),
             ),

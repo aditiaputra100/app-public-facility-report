@@ -1,6 +1,7 @@
 import 'package:app_public_facility_report/app/user/models/report_model.dart';
 import 'package:app_public_facility_report/app/user/viewmodels/report_view_model.dart';
 import 'package:app_public_facility_report/app/user/viewmodels/user_view_model.dart';
+import 'package:app_public_facility_report/app/user/views/selected_report_view.dart';
 import 'package:app_public_facility_report/app/user/views/widget/user_card_report.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,15 +19,17 @@ class _InFinishedReportState extends State<InFinishedReport> {
   @override
   void initState() {
     super.initState();
+  }
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      setState(() {
-        _report =
-            Provider.of<ReportViewModel>(
-              context,
-              listen: false,
-            ).reports['finished'];
-      });
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    setState(() {
+      _report =
+          Provider.of<ReportViewModel>(
+            context,
+            listen: false,
+          ).reports['finished'];
     });
   }
 
@@ -48,7 +51,7 @@ class _InFinishedReportState extends State<InFinishedReport> {
       }
     } else {
       setState(() {
-        _report = rvm.reports["in-review"];
+        _report = rvm.reports["finished"];
       });
     }
   }
@@ -67,11 +70,28 @@ class _InFinishedReportState extends State<InFinishedReport> {
                 ? ListView.builder(
                   itemCount: _report!.length,
                   itemBuilder: (context, index) {
-                    return UserCardReport(
-                      imagePath: _report![index].imagePath,
-                      facility: _report![index].facility,
-                      description: _report![index].description,
-                      createdAt: _report![index].createdAt,
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder:
+                                (context) => SelectedReportView(
+                                  facility: _report![index].facility,
+                                  description: _report![index].description,
+                                  location: _report![index].location,
+                                  status: "Selesai",
+                                  imagePath: _report![index].imagePath,
+                                ),
+                          ),
+                        );
+                      },
+                      child: UserCardReport(
+                        imagePath: _report![index].imagePath,
+                        facility: _report![index].facility,
+                        description: _report![index].description,
+                        location: _report![index].location,
+                        createdAt: _report![index].createdAt,
+                      ),
                     );
                   },
                 )
