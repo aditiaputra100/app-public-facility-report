@@ -1,3 +1,4 @@
+import 'package:app_public_facility_report/app/user/viewmodels/report_view_model.dart';
 import 'package:app_public_facility_report/app/user/viewmodels/user_view_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -93,6 +94,10 @@ class AuthWrapper extends StatelessWidget {
             if (user == null) {
               Navigator.of(context).pushReplacementNamed('/sign-in');
             } else {
+              Provider.of<ReportViewModel>(
+                context,
+                listen: false,
+              ).getReportCurrentUser(user);
               Navigator.of(context).pushReplacementNamed('/home');
             }
           });

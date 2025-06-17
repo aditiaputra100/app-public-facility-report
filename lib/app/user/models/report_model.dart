@@ -13,7 +13,9 @@ class ReportModel {
   final DateTime updatedAt;
 
   ReportModel({
+    this.id,
     required this.userUid,
+    this.employeeUid,
     required this.facility,
     required this.description,
     required this.location,
@@ -29,5 +31,18 @@ class ReportModel {
       "description": description,
       "location": location,
     };
+  }
+
+  factory ReportModel.fromMap(Map<String, dynamic> map) {
+    return ReportModel(
+      userUid: map["user_uid"],
+      facility: map["facility"],
+      description: map["description"],
+      location: map["location"],
+      imagePath: map["picture_path"],
+      status: map["status"],
+      createdAt: DateTime.parse(map["created_at"]),
+      updatedAt: DateTime.parse(map["updated_at"]),
+    );
   }
 }
