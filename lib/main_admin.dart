@@ -1,6 +1,7 @@
 import 'package:app_public_facility_report/app/admin/auth_wrapper.dart';
 import 'package:app_public_facility_report/app/admin/viewmodels/admin_view_model.dart';
 import 'package:app_public_facility_report/app/admin/views/main_view.dart';
+import 'package:app_public_facility_report/app/admin/views/register_admin_view.dart';
 import 'package:app_public_facility_report/app/admin/views/sign_in_view.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
       title: "Public Facility Report Admin",
       routes: {
         "/sign-in": (context) => const SignInView(),
+        "/register": (context) => const RegisterAdminView(),
         "/home": (context) => const MainView(),
       },
       home: const AuthWrapper(),

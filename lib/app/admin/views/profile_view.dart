@@ -34,17 +34,31 @@ class _ProfileViewState extends State<ProfileView> {
 
   @override
   Widget build(BuildContext context) {
-    final uvm = Provider.of<AdminViewModel>(context, listen: false);
+    final uvm = Provider.of<AdminViewModel>(context);
 
     return Padding(
       padding: EdgeInsetsGeometry.all(16),
       child: Center(
-        child: ElevatedButton(
-          onPressed: _logout,
-          child:
-              uvm.isLoading
-                  ? CircularProgressIndicator(strokeWidth: 2)
-                  : Text("Keluar"),
+        child: Column(
+          spacing: 24,
+          children: [
+            CircleAvatar(radius: 50, child: Icon(Icons.person, size: 64)),
+            Column(
+              spacing: 12,
+              children: [
+                Text(uvm.user?.email ?? "email@email.com"),
+                Text(uvm.user?.displayName ?? "Admin"),
+              ],
+            ),
+            ElevatedButton(onPressed: () {}, child: Text("Ubah Password")),
+            ElevatedButton(
+              onPressed: _logout,
+              child:
+                  uvm.isLoading
+                      ? CircularProgressIndicator(strokeWidth: 2)
+                      : Text("Keluar"),
+            ),
+          ],
         ),
       ),
     );
