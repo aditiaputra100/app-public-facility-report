@@ -75,6 +75,30 @@ class UserViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Future<Map<String, List<ReportModel>?>> getReportCurrentUser() async {
+  //   _isLoading = true;
+  //   notifyListeners();
+
+  //   Map<String, List<ReportModel>?> reportMap = {
+  //     "in-review": null,
+  //     "in-progress": null,
+  //     "finished": null,
+  //   };
+
+  //   try {
+  //     reportMap = await _userService.getReportUser(_user!);
+
+  //     _error = null;
+  //   } catch (error) {
+  //     _error = "Terjadi kesalahan";
+  //   }
+
+  //   _isLoading = false;
+  //   notifyListeners();
+
+  //   return reportMap;
+  // }
+
   Future<void> addReport(
     String facility,
     String description,
@@ -89,7 +113,7 @@ class UserViewModel extends ChangeNotifier {
       description: description,
       location: _placemark!.subAdministrativeArea ?? 'Unknown',
       imagePath: image.path,
-      status: 'in-submitted',
+      status: 'in-review',
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );

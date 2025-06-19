@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:path/path.dart';
 import 'package:app_public_facility_report/app/user/models/report_model.dart';
@@ -8,6 +9,58 @@ import 'package:http/http.dart' as http;
 class UserService {
   final _auth = FirebaseAuth.instance;
   final _host = kDebugMode ? "http://10.0.2.2:8000" : "";
+
+  Future<Map<String, List<ReportModel>?>> getReportUser(User user) async {
+    final uri = Uri.parse("$_host/report/user/${user.uid}");
+
+    String? token = await user.getIdToken();
+
+    final response = await http
+        .get(uri, headers: {"Authorization": "Bearer $token"})
+        .timeout(Duration(seconds: 15));
+
+    final Map<String, List<ReportModel>?> statusMap = {
+      "in-review": null,
+      "in-progress": null,
+      "finished": null,
+    };
+
+    if (response.statusCode == 200) {
+      final body = jsonDecode(response.body);
+      final data = body["data"];
+
+      for (final Map<String, dynamic> map in data) {
+        map["picture_path"] = "$_host/${map["picture_path"]}";
+        switch (map["status"]) {
+          case "in-progress":
+            if (statusMap["in-progress"] == null) {
+              statusMap["in-progress"] = [ReportModel.fromMap(map)];
+            } else {
+              statusMap["in-progress"]!.add(ReportModel.fromMap(map));
+            }
+            break;
+          case "finished":
+            if (statusMap["finished"] == null) {
+              statusMap["finished"] = [ReportModel.fromMap(map)];
+            } else {
+              statusMap["finished"]!.add(ReportModel.fromMap(map));
+            }
+            break;
+          case "in-review":
+          default:
+            if (statusMap["in-review"] == null) {
+              statusMap["in-review"] = [ReportModel.fromMap(map)];
+            } else {
+              statusMap["in-review"]!.add(ReportModel.fromMap(map));
+            }
+        }
+      }
+
+      return statusMap;
+    }
+
+    return statusMap;
+  }
 
   Future<void> createReport(ReportModel report, String? token) async {
     final uri = Uri.parse("$_host/report");
