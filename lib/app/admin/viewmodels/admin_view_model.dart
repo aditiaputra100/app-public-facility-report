@@ -1,6 +1,7 @@
 import 'package:app_public_facility_report/app/admin/services/admin_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 class AdminViewModel extends ChangeNotifier {
   final AdminService _adminService = AdminService();
@@ -39,6 +40,16 @@ class AdminViewModel extends ChangeNotifier {
     } catch (error) {
       _error = "Terjadi kesalahan";
     }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> logout() async {
+    _isLoading = true;
+    notifyListeners();
+
+    await _adminService.signOut();
 
     _isLoading = false;
     notifyListeners();
