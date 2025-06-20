@@ -29,7 +29,7 @@ class _InSubmittedReportState extends State<InSubmittedReport> {
           Provider.of<ReportViewModel>(
             context,
             listen: false,
-          ).reports['in-review'];
+          ).reportsUser["data"]['in-review'];
     });
   }
 
@@ -51,7 +51,7 @@ class _InSubmittedReportState extends State<InSubmittedReport> {
       }
     } else {
       setState(() {
-        _report = rvm.reports["in-review"];
+        _report = rvm.reportsUser["data"]["in-review"];
       });
     }
   }

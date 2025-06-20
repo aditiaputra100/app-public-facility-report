@@ -1,47 +1,44 @@
-import 'package:app_public_facility_report/app/user/viewmodels/report_view_model.dart';
+import 'dart:io';
 import 'package:app_public_facility_report/app/user/viewmodels/user_view_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class AuthWrapper extends StatelessWidget {
+class AuthWrapper extends StatefulWidget {
   const AuthWrapper({super.key});
 
-  // Future<void> _handleLocationPermission(BuildContext context) async {
-  //   bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-  //   if (context.mounted) {
-  //     if (!serviceEnabled) {
-  //       _showSnackBar(context, "Lokasi tidak aktif, harap aktifkan lokasi!");
-  //       return;
-  //     }
-  //   }
-  //   LocationPermission permission = await Geolocator.checkPermission();
+  @override
+  State<AuthWrapper> createState() => _AuthWrapperState();
+}
 
-  //   if (permission == LocationPermission.denied) {
-  //     permission = await Geolocator.requestPermission();
+class _AuthWrapperState extends State<AuthWrapper> {
+  String? _error;
 
-  //     if (permission == LocationPermission.denied) {
-  //       if (context.mounted) {
-  //         _showSnackBar(context, "Ijin lokasi ditolak");
-  //       }
-  //       return;
-  //     }
-  //   } else if (permission == LocationPermission.deniedForever) {
-  //     if (context.mounted) {
-  //       _showSnackBar(context, "Ijin lokasi ditolak, harap beri ijin lokasi");
-  //     }
-  //     return;
-  //   }
-  // }
+  Future<bool> _checkInternetConnection() async {
+    // final connectivityResult = await Connectivity().checkConnectivity();
 
-  // void _showSnackBar(BuildContext context, String message) {
-  //   ScaffoldMessenger.of(context).showSnackBar(
-  //     SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
-  //   );
-  // }
+    // if (connectivityResult.isEmpty) {
+    //   return false;
+    // }
+
+    // ConnectivityResult.
+
+    try {
+      final result = await InternetAddress.lookup('google.com');
+
+      if (result.isNotEmpty && result.first.rawAddress.isNotEmpty) {
+        return true;
+      } else {
+        return false;
+      }
+    } on SocketException catch (_) {
+      return false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    // Future<void> _handleLocationPermission(BuildContext context) async {
     // return FutureBuilder<void>(
     //   future: _handleLocationPermission(context),
     //   builder: (context, snapshot) {
@@ -84,41 +81,153 @@ class AuthWrapper extends StatelessWidget {
     //     );
     //   },
     // );
-    return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(),
+
+    return FutureBuilder(
+      future: _checkInternetConnection(),
       builder: (context, snapshot) {
-        Provider.of<UserViewModel>(context).handleLocationPermission();
-        if (snapshot.connectionState == ConnectionState.active) {
-          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-            final user = snapshot.data;
-            if (user == null) {
-              Navigator.of(context).pushReplacementNamed('/sign-in');
-            } else {
-              Provider.of<ReportViewModel>(
-                context,
-                listen: false,
-              ).getReportCurrentUser(user);
-              Navigator.of(context).pushReplacementNamed('/home');
-            }
-          });
-        }
-        return Scaffold(
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 64,
-              children: [
-                FlutterLogo(size: 100),
-                SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(),
-                ),
-              ],
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Scaffold(
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                spacing: 64,
+                children: [
+                  FlutterLogo(size: 100),
+                  SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                ],
+              ),
             ),
-          ),
+          );
+        }
+
+        if (snapshot.hasData && !snapshot.data!) {
+          return Scaffold(
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                spacing: 64,
+                children: [
+                  FlutterLogo(size: 100),
+                  Text("Tidak dapat terhubung ke internet"),
+                ],
+              ),
+            ),
+          );
+        }
+
+        return StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, snapshot) {
+            Provider.of<UserViewModel>(context).handleLocationPermission();
+            if (snapshot.connectionState == ConnectionState.active) {
+              WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                final user = snapshot.data;
+                if (user == null) {
+                  Navigator.of(context).pushReplacementNamed('/sign-in');
+                } else {
+                  Navigator.of(context).pushReplacementNamed('/home');
+                }
+              });
+            }
+
+            return Scaffold(
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  spacing: 64,
+                  children: [
+                    FlutterLogo(size: 100),
+                    SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         );
       },
     );
+
+    // return StreamBuilder<User?>(
+    //   stream: FirebaseAuth.instance.authStateChanges(),
+    //   builder: (context, snapshot) {
+    //     Provider.of<UserViewModel>(context).handleLocationPermission();
+    //     if (snapshot.connectionState == ConnectionState.active) {
+    //       WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+    //         final user = snapshot.data;
+    //         if (user == null) {
+    //           Navigator.of(context).pushReplacementNamed('/sign-in');
+    //         } else {
+    //           final rvm = Provider.of<ReportViewModel>(context, listen: false);
+    //           await rvm.getReportCurrent(user);
+
+    //           bool isError = false;
+
+    //           if (rvm.error != null) {
+    //             isError = true;
+    //             if (context.mounted) {
+    //               ScaffoldMessenger.of(context).showSnackBar(
+    //                 SnackBar(
+    //                   content: Text(rvm.error!),
+    //                   behavior: SnackBarBehavior.floating,
+    //                   backgroundColor: Colors.red,
+    //                 ),
+    //               );
+    //             }
+    //           }
+
+    //           await rvm.getReportCurrentUser(user);
+
+    //           if (rvm.error != null) {
+    //             isError = true;
+    //             if (context.mounted) {
+    //               ScaffoldMessenger.of(context).showSnackBar(
+    //                 SnackBar(
+    //                   content: Text(rvm.error!),
+    //                   behavior: SnackBarBehavior.floating,
+    //                   backgroundColor: Colors.red,
+    //                 ),
+    //               );
+    //             }
+    //           }
+
+    //           if (!isError) {
+    //             if (context.mounted) {
+    //               Navigator.of(context).pushReplacementNamed('/home');
+    //             }
+    //           }
+    //         }
+    //       });
+    //     } else if (snapshot.connectionState == ConnectionState.done) {
+    //       print("done");
+    //     }
+
+    //     return Scaffold(
+    //       body: Center(
+    //         child: Column(
+    //           mainAxisAlignment: MainAxisAlignment.center,
+    //           spacing: 64,
+    //           children: [
+    //             FlutterLogo(size: 100),
+    //             _error != null
+    //                 ? Text(_error!)
+    //                 : SizedBox(
+    //                   width: 24,
+    //                   height: 24,
+    //                   child: CircularProgressIndicator(strokeWidth: 2),
+    //                 ),
+    //           ],
+    //         ),
+    //       ),
+    //     );
+    //   },
+    // );
   }
 }

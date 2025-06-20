@@ -1,3 +1,5 @@
+import 'package:app_public_facility_report/app/user/viewmodels/report_view_model.dart';
+import 'package:app_public_facility_report/app/user/viewmodels/user_view_model.dart';
 import 'package:app_public_facility_report/app/user/views/home/home_page_view.dart';
 import 'package:app_public_facility_report/app/user/views/home/profile_page_view.dart';
 import 'package:app_public_facility_report/app/user/views/home/report_page_view.dart';
@@ -5,6 +7,7 @@ import 'package:app_public_facility_report/app/user/views/status_report/in_finis
 import 'package:app_public_facility_report/app/user/views/status_report/in_progress_report.dart';
 import 'package:app_public_facility_report/app/user/views/status_report/in_submitted_report.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 const titleIndex = {1: "Lapor", 2: "Status", 3: "Profil"};
 
@@ -23,6 +26,42 @@ class _HomeViewState extends State<HomeView> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      final uvm = Provider.of<UserViewModel>(context, listen: false);
+      final rvm = Provider.of<ReportViewModel>(context, listen: false);
+
+      final user = uvm.user;
+
+      if (user != null) {
+        await rvm.getReportCurrent(user);
+        await rvm.getReportCurrentUser(user);
+
+        String? error = rvm.error;
+
+        if (error != null && mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(rvm.error!),
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+
+        // error = rvm.error;
+
+        // if (error != null && mounted) {
+        //   ScaffoldMessenger.of(context).showSnackBar(
+        //     SnackBar(
+        //       content: Text(rvm.error!),
+        //       behavior: SnackBarBehavior.floating,
+        //       backgroundColor: Colors.red,
+        //     ),
+        //   );
+        // }
+      }
+    });
   }
 
   @override

@@ -108,7 +108,6 @@ class UserViewModel extends ChangeNotifier {
     notifyListeners();
 
     final ReportModel reportModel = ReportModel(
-      userUid: _user!.uid,
       facility: facility,
       description: description,
       location: _placemark!.subAdministrativeArea ?? 'Unknown',
