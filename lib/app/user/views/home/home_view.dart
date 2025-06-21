@@ -94,7 +94,13 @@ class _HomeViewState extends State<HomeView> with TickerProviderStateMixin {
       body:
           [
             // Beranda
-            HomePageView(),
+            HomePageView(
+              onTapReport: () {
+                setState(() {
+                  _currentPageIndex = 1;
+                });
+              },
+            ),
 
             // Laporan
             ReportPageView(),

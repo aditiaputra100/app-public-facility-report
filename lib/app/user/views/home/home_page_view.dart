@@ -8,7 +8,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class HomePageView extends StatefulWidget {
-  const HomePageView({super.key});
+  final VoidCallback? onTapReport;
+
+  const HomePageView({super.key, this.onTapReport});
 
   @override
   State<HomePageView> createState() => _HomePageViewState();
@@ -150,7 +152,7 @@ class _HomePageViewState extends State<HomePageView> {
                                 style: GoogleFonts.dmSans(color: Colors.grey),
                               ),
                               IconButton.filled(
-                                onPressed: () {},
+                                onPressed: widget.onTapReport,
                                 icon: Icon(Icons.add),
                               ),
                             ],
