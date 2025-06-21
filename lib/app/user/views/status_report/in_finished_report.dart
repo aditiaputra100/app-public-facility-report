@@ -29,7 +29,7 @@ class _InFinishedReportState extends State<InFinishedReport> {
           Provider.of<ReportViewModel>(
             context,
             listen: false,
-          ).reports['finished'];
+          ).reportsUser["data"]['finished'];
     });
   }
 
@@ -51,7 +51,7 @@ class _InFinishedReportState extends State<InFinishedReport> {
       }
     } else {
       setState(() {
-        _report = rvm.reports["finished"];
+        _report = rvm.reportsUser["data"]["finished"];
       });
     }
   }

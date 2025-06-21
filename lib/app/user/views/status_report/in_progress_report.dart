@@ -29,7 +29,7 @@ class _InProgressReportState extends State<InProgressReport> {
           Provider.of<ReportViewModel>(
             context,
             listen: false,
-          ).reports['in-progress'];
+          ).reportsUser["data"]['in-progress'];
     });
   }
 
@@ -51,7 +51,7 @@ class _InProgressReportState extends State<InProgressReport> {
       }
     } else {
       setState(() {
-        _report = rvm.reports["in-progress"];
+        _report = rvm.reportsUser["data"]["in-progress"];
       });
     }
   }

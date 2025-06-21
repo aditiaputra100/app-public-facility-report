@@ -1,6 +1,6 @@
 class ReportModel {
   int? id;
-  final String userUid;
+  Map<String, dynamic>? user;
   String? employeeUid;
   final String facility;
   final String description;
@@ -12,7 +12,7 @@ class ReportModel {
 
   ReportModel({
     this.id,
-    required this.userUid,
+    this.user,
     this.employeeUid,
     required this.facility,
     required this.description,
@@ -33,7 +33,7 @@ class ReportModel {
 
   factory ReportModel.fromMap(Map<String, dynamic> map) {
     return ReportModel(
-      userUid: map["user_uid"],
+      user: map["user"],
       facility: map["facility"],
       description: map["description"],
       location: map["location"],
