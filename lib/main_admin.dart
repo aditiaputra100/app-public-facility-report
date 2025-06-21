@@ -1,5 +1,6 @@
 import 'package:app_public_facility_report/app/admin/auth_wrapper.dart';
 import 'package:app_public_facility_report/app/admin/viewmodels/admin_view_model.dart';
+import 'package:app_public_facility_report/app/admin/viewmodels/report_view_model.dart';
 import 'package:app_public_facility_report/app/admin/views/main_view.dart';
 import 'package:app_public_facility_report/app/admin/views/register_admin_view.dart';
 import 'package:app_public_facility_report/app/admin/views/sign_in_view.dart';
@@ -21,6 +22,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => AdminViewModel()),
+        ChangeNotifierProvider(create: (context) => ReportViewModel()),
       ],
       child: const MyApp(),
     ),
