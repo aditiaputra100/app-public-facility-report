@@ -12,14 +12,14 @@ class ReportViewModel extends ChangeNotifier {
   String? get error => _error;
   bool get isLoading => _isLoading;
 
-  Future<void> getCurrentReport(User user) async {
+  Future<void> getCurrentReport(User user, {String status = ""}) async {
     _isLoading = true;
     notifyListeners();
 
     try {
       String? token = await user.getIdToken();
 
-      final reports = await _reportService.getReport(token);
+      final reports = await _reportService.getReport(token, status: status);
 
       _reports = reports;
 
@@ -30,5 +30,26 @@ class ReportViewModel extends ChangeNotifier {
 
     _isLoading = false;
     notifyListeners();
+  }
+
+  Future<bool> updateReportStatus(User user, int id, String status) async {
+    _isLoading = true;
+    notifyListeners();
+
+    bool statusUpdate = false;
+
+    try {
+      final token = await user.getIdToken();
+      statusUpdate = await _reportService.updateReportStatus(token, id, status);
+
+      _error = null;
+    } catch (_) {
+      _error = "Terjadi kesalahan";
+    }
+
+    _isLoading = false;
+    notifyListeners();
+
+    return statusUpdate;
   }
 }

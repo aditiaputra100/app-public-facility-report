@@ -181,10 +181,12 @@ class _HomeViewState extends State<HomeView> {
                                 MaterialPageRoute(
                                   builder:
                                       (context) => ReportAdminView(
+                                        id: report.id!,
                                         name: report.user!["full_name"],
                                         facility: report.facility,
                                         description: report.description,
                                         location: report.location,
+                                        status: report.status,
                                         imagePath: report.imagePath,
                                       ),
                                 ),
