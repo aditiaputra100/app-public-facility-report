@@ -5,10 +5,16 @@ import 'package:flutter/foundation.dart';
 class ReportViewModel extends ChangeNotifier {
   final ReportService _reportService = ReportService();
   Map<String, dynamic>? _reports;
+  Map<String, dynamic>? _reportReview;
+  Map<String, dynamic>? _reportProgress;
+  Map<String, dynamic>? _reportFinished;
   String? _error;
   bool _isLoading = false;
 
   Map<String, dynamic>? get reports => _reports;
+  Map<String, dynamic>? get reportReview => _reportReview;
+  Map<String, dynamic>? get reportProgress => _reportProgress;
+  Map<String, dynamic>? get reportFinished => _reportFinished;
   String? get error => _error;
   bool get isLoading => _isLoading;
 
@@ -20,8 +26,18 @@ class ReportViewModel extends ChangeNotifier {
       String? token = await user.getIdToken();
 
       final reports = await _reportService.getReport(token, status: status);
-
-      _reports = reports;
+      switch (status) {
+        case "in-review":
+          _reportReview = reports;
+          break;
+        case "in-progress":
+          _reportProgress = reports;
+          break;
+        case "finished":
+          _reportFinished = reports;
+        default:
+          _reports = reports;
+      }
 
       _error = null;
     } catch (_) {
