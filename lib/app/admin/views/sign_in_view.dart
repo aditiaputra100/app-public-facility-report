@@ -39,9 +39,7 @@ class _SignInViewState extends State<SignInView> {
             ),
           );
         } else {
-          Navigator.of(
-            context,
-          ).pushNamedAndRemoveUntil("/home", (route) => true);
+          Navigator.of(context).pushReplacementNamed("/home");
         }
       }
     }

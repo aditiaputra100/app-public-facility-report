@@ -1,6 +1,8 @@
 import 'package:app_public_facility_report/app/admin/auth_wrapper.dart';
 import 'package:app_public_facility_report/app/admin/viewmodels/admin_view_model.dart';
-import 'package:app_public_facility_report/app/admin/views/home_view.dart';
+import 'package:app_public_facility_report/app/admin/viewmodels/report_view_model.dart';
+import 'package:app_public_facility_report/app/admin/views/main_view.dart';
+import 'package:app_public_facility_report/app/admin/views/register_admin_view.dart';
 import 'package:app_public_facility_report/app/admin/views/sign_in_view.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -20,6 +22,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => AdminViewModel()),
+        ChangeNotifierProvider(create: (context) => ReportViewModel()),
       ],
       child: const MyApp(),
     ),
@@ -35,7 +38,8 @@ class MyApp extends StatelessWidget {
       title: "Public Facility Report Admin",
       routes: {
         "/sign-in": (context) => const SignInView(),
-        "/home": (context) => const HomeView(),
+        "/register": (context) => const RegisterAdminView(),
+        "/home": (context) => const MainView(),
       },
       home: const AuthWrapper(),
     );

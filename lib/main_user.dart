@@ -1,4 +1,5 @@
 import 'package:app_public_facility_report/app/user/auth_wrapper.dart';
+import 'package:app_public_facility_report/app/user/viewmodels/report_view_model.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'firebase/firebase_options_user.dart';
 import 'package:app_public_facility_report/app/user/theme.dart';
@@ -20,7 +21,10 @@ void main() async {
 
   runApp(
     MultiProvider(
-      providers: [ChangeNotifierProvider(create: (context) => UserViewModel())],
+      providers: [
+        ChangeNotifierProvider(create: (context) => UserViewModel()),
+        ChangeNotifierProvider(create: (context) => ReportViewModel()),
+      ],
       child: const MyApp(),
     ),
   );
@@ -32,7 +36,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Public Facility Report User',
       theme: theme,
       routes: {
         '/home': (context) => HomeView(),
