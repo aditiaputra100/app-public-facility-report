@@ -25,6 +25,11 @@ jobs:
       - name: Create .env file
         run: echo "${{ secrets.ENV_FILE }}" > .env
 
+      - name: Decode google-services.json to correct flavor folder
+        run: |
+          mkdir -p android/app/src/user
+          echo "${{ secrets.GOOGLE_SERVICES_USER_JSON }}" | base64 -d > android/app/src/user/google-services.json
+
       - name: Build APK for User Flavor
         run: flutter build apk --flavor user -t lib/main_user.dart
 
@@ -43,6 +48,14 @@ jobs:
 
       - name: Install dependencies
         run: flutter pub get
+
+      - name: Create .env file
+        run: echo "${{ secrets.ENV_FILE }}" > .env
+
+      - name: Decode google-services.json to correct flavor folder
+        run: |
+          mkdir -p android/app/src/user
+          echo "${{ secrets.GOOGLE_SERVICES_ADMIN_JSON }}" | base64 -d > android/app/src/admin/google-services.json
 
       - name: Build APK for Admin Flavor
         run: flutter build apk --flavor admin -t lib/main_admin.dart
