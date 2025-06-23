@@ -2,24 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-class CardReport extends StatelessWidget {
-  final String name;
+class UserCardReport extends StatelessWidget {
+  final String? imagePath;
+  final String facility;
   final String description;
-  String? imagePath;
+  final String location;
   final DateTime createdAt;
-  CardReport({
+
+  const UserCardReport({
     super.key,
-    required this.name,
-    required this.description,
     this.imagePath,
+    required this.facility,
+    required this.description,
     required this.createdAt,
+    required this.location,
   });
 
   @override
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(8),
         child: Row(
           spacing: 6,
           children: [
@@ -35,13 +38,14 @@ class CardReport extends StatelessWidget {
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 6,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Judul
+                      // Judul (fasilitas)
                       Text(
-                        name,
+                        facility,
                         style: GoogleFonts.dmSans(fontWeight: FontWeight.bold),
                       ),
                       Text(DateFormat("dd-MM-yyyy").format(createdAt)),
@@ -50,6 +54,12 @@ class CardReport extends StatelessWidget {
 
                   // Deskripsi
                   Text(description, style: GoogleFonts.dmSans()),
+                  Row(
+                    children: [
+                      Icon(Icons.place, color: Colors.grey),
+                      Text(location),
+                    ],
+                  ),
                 ],
               ),
             ),

@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 
 class FilledTextField extends StatelessWidget {
-  final TextEditingController controller;
-  final String hintText;
+  final TextEditingController? controller;
+  final String? hintText;
   final Icon? prefixIcon;
   final int? maxLines;
   final TextInputType? inputType;
+  final bool? enabled;
 
   const FilledTextField({
     super.key,
-    required this.controller,
-    required this.hintText,
+    this.controller,
+    this.hintText,
     this.prefixIcon,
     this.maxLines,
     this.inputType,
+    this.enabled,
   });
 
   @override
@@ -28,6 +30,7 @@ class FilledTextField extends StatelessWidget {
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
       maxLines: maxLines ?? 1,
+      enabled: enabled,
     );
   }
 }

@@ -1,24 +1,139 @@
+import 'dart:async';
 import 'dart:io';
 
+import 'package:app_public_facility_report/app/user/models/report_model.dart';
 import 'package:app_public_facility_report/app/user/services/user_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 
 class UserViewModel extends ChangeNotifier {
   final UserService _userService = UserService();
   User? _user;
   String? _error;
   bool _isLoading = false;
+  bool _isLocationEnable = false;
+  LocationPermission? _locationPermission;
+  Placemark? _placemark;
 
   User? get user => _user;
   String? get error => _error;
   bool get isLoading => _isLoading;
+  bool get isLocationEnable => _isLocationEnable;
+  LocationPermission? get locationPermission => _locationPermission;
+  Placemark? get placemark => _placemark;
 
   UserViewModel() {
     _userService.authStateChange.listen((User? user) {
       _user = user;
       notifyListeners();
     });
+  }
+
+  Future<void> handleLocationPermission() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      _isLocationEnable = false;
+      notifyListeners();
+      return;
+    }
+
+    _isLocationEnable = true;
+    notifyListeners();
+
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+
+      if (permission == LocationPermission.denied) {
+        _locationPermission = LocationPermission.denied;
+        notifyListeners();
+        return;
+      }
+    } else if (permission == LocationPermission.deniedForever) {
+      _locationPermission = LocationPermission.deniedForever;
+      notifyListeners();
+      return;
+    }
+
+    _locationPermission = LocationPermission.always;
+    getCurrentLocation();
+    notifyListeners();
+  }
+
+  Future<void> getCurrentLocation() async {
+    Position position = await Geolocator.getCurrentPosition();
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+      position.latitude,
+      position.longitude,
+    );
+    Placemark placemark = placemarks[0];
+
+    _placemark = placemark;
+    notifyListeners();
+  }
+
+  // Future<Map<String, List<ReportModel>?>> getReportCurrentUser() async {
+  //   _isLoading = true;
+  //   notifyListeners();
+
+  //   Map<String, List<ReportModel>?> reportMap = {
+  //     "in-review": null,
+  //     "in-progress": null,
+  //     "finished": null,
+  //   };
+
+  //   try {
+  //     reportMap = await _userService.getReportUser(_user!);
+
+  //     _error = null;
+  //   } catch (error) {
+  //     _error = "Terjadi kesalahan";
+  //   }
+
+  //   _isLoading = false;
+  //   notifyListeners();
+
+  //   return reportMap;
+  // }
+
+  Future<void> addReport(
+    String facility,
+    String description,
+    File image,
+  ) async {
+    _isLoading = true;
+    notifyListeners();
+
+    final ReportModel reportModel = ReportModel(
+      facility: facility,
+      description: description,
+      location: _placemark!.subAdministrativeArea ?? 'Unknown',
+      imagePath: image.path,
+      status: 'in-review',
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
+
+    String? token = await _user!.getIdToken();
+
+    try {
+      await _userService.createReport(reportModel, token);
+      _error = null;
+    } on TimeoutException catch (_) {
+      _error = "Tidak dapat terhubung ke server!";
+    } on HttpException catch (error) {
+      if (error.message == 'bad-request') {
+        _error = "Token tidak valid!";
+      }
+    } catch (_) {
+      _error = "Terjadi kesalahan!";
+    }
+
+    _isLoading = false;
+    notifyListeners();
   }
 
   Future<void> register(String email, String password, String name) async {
