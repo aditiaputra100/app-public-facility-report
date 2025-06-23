@@ -50,7 +50,7 @@ class _ProfileViewState extends State<ProfileView> {
                 Text(uvm.user?.displayName ?? "Admin"),
               ],
             ),
-            ElevatedButton(onPressed: () {}, child: Text("Ubah Password")),
+            // ElevatedButton(onPressed: () {}, child: Text("Ubah Password")),
             ElevatedButton(
               onPressed: _logout,
               child:
