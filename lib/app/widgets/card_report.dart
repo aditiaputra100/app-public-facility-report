@@ -5,9 +5,9 @@ import 'package:intl/intl.dart';
 class CardReport extends StatelessWidget {
   final String name;
   final String description;
-  String? imagePath;
+  final String? imagePath;
   final DateTime createdAt;
-  CardReport({
+  const CardReport({
     super.key,
     required this.name,
     required this.description,
