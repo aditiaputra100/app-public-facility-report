@@ -1,0 +1,45 @@
+name: Flutter Build on Merge to Main
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-user-flavor:
+    name: Build Flutter User Flavor
+    runs-on: ubuntu-latest
+    if: github.event.head_commit.message != ''
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.0'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build APK for User Flavor
+        run: flutter build apk --flavor user -t lib/main_user.dart
+
+  build-admin-flavor:
+    name: Build Flutter Admin Flavor
+    runs-on: ubuntu-latest
+    needs: build-user-flavor
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.0'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build APK for Admin Flavor
+        run: flutter build apk --flavor admin -t lib/main_admin.dart
