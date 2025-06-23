@@ -17,16 +17,15 @@ class ReportService {
 
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body) as Map<String, dynamic>;
-
       final List<ReportModel> reports = [];
-      final int length = body["length"];
+      final length = body["counts"];
 
       for (final data in body["data"]) {
         data["picture_path"] = "$_host/${data["picture_path"]}";
         reports.add(ReportModel.fromMap(data));
       }
 
-      return {"data": reports, "length": length};
+      return {"data": reports, "length": length["all"]};
     }
 
     return null;

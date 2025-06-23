@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:app_public_facility_report/app/user/models/report_model.dart';
 import 'package:app_public_facility_report/app/user/services/report_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
