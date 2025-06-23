@@ -6,8 +6,11 @@ import 'package:http/http.dart' as http;
 class ReportService {
   final _host = kDebugMode ? "http://10.0.2.2:8000" : "";
 
-  Future<Map<String, dynamic>?> getReport(String? token) async {
-    final uri = Uri.parse("$_host/report");
+  Future<Map<String, dynamic>?> getReport(
+    String? token, {
+    String status = "",
+  }) async {
+    final uri = Uri.parse("$_host/report?status_report=$status");
 
     final response = await http
         .get(uri, headers: {"Authorization": "Bearer $token"})
@@ -16,10 +19,7 @@ class ReportService {
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
       final data = body["data"];
-      final length = body["length"];
-      final lengthReview = body["length_review"];
-      final lengthProgress = body["length_progress"];
-      final lengthFinished = body["length_finished"];
+      final length = body["counts"];
 
       final List<ReportModel> reports = [];
 
@@ -30,13 +30,32 @@ class ReportService {
 
       return {
         "data": reports,
-        "length": length,
-        "length_review": lengthReview,
-        "length_progress": lengthProgress,
-        "length_finished": lengthFinished,
+        "length": length["all"],
+        "length_review": length["in-review"],
+        "length_progress": length["in-progress"],
+        "length_finished": length["finished"],
       };
     }
 
     return null;
+  }
+
+  Future<bool> updateReportStatus(String? token, int id, String status) async {
+    final uri = Uri.parse("$_host/report/status/$id");
+
+    final response = await http.put(
+      uri,
+      headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode({"status_report": status}),
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    }
+
+    return false;
   }
 }

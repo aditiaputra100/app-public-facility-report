@@ -33,6 +33,7 @@ class ReportModel {
 
   factory ReportModel.fromMap(Map<String, dynamic> map) {
     return ReportModel(
+      id: map["id"],
       user: map["user"],
       facility: map["facility"],
       description: map["description"],
